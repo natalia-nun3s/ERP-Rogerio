@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP IMS - Cadastro de Produtos</title>
+    
+    <!-- CSS Global -->
+    <link rel="stylesheet" href="css/global.css">
+    <!-- CSS da Página -->
+    <link rel="stylesheet" href="css/controle.css">
+    
+    <!-- VLibras -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+    <!-- Store - Gerenciamento Central de Dados -->
+    <script src="js/store.js"></script>
+
+</head>
+<body>
+
+    <!-- Fundo Animado -->
+    <div class="background-particles" id="particles"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <div class="logo-icon">IMS</div>
+                    <div>
+                        <h1>ERP IMS</h1>
+                        <div class="header-subtitle">Cadastro e Controle de Produtos</div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <!-- Botão de Tema (Modo Claro/Escuro) -->
+                <button class="theme-toggle" aria-label="Alternar tema">☀️</button>
+                
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Online</span>
+                </div>
+                <span class="header-divider"></span>
+                <span class="header-time" id="headerTime"></span>
+                <a href="index.html" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.75rem;">← Voltar</a>
+            </div>
+        </header>
+
+        <!-- Conteúdo -->
+        <div class="controle-page">
+            <div class="controle-header">
+                <h1>📦 Cadastro e Controle de Produtos</h1>
+                <p>Gerencie seu catálogo de produtos com eficiência</p>
+            </div>
+
+            <div class="controle-grid">
+                <!-- Formulário -->
+                <div class="produto-form">
+                    <div class="form-title">
+                        <span>✏️</span> Dados do Produto
+                        <span class="badge">novo</span>
+                    </div>
+
+                    <form id="formProduto">
+                        <div class="form-group">
+                            <label for="nome">Nome do Produto</label>
+                            <input type="text" id="nome" placeholder="Ex: Notebook Dell XPS" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="codigo">Código / SKU</label>
+                                <input type="text" id="codigo" placeholder="SKU-001" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="categoria">Categoria</label>
+                                <select id="categoria" required>
+                                    <option value="">Selecione</option>
+                                    <option>Eletrônicos</option>
+                                    <option>Roupas</option>
+                                    <option>Alimentos</option>
+                                    <option>Outros</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fornecedor">Fornecedor</label>
+                            <input type="text" id="fornecedor" placeholder="Nome do fornecedor" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="custo">Preço de Custo (R$)</label>
+                                <input type="number" id="custo" step="0.01" placeholder="0.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="venda">Preço de Venda (R$)</label>
+                                <input type="number" id="venda" step="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="estoque">Quantidade em Estoque</label>
+                                <input type="number" id="estoque" placeholder="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="minimo">Estoque Mínimo</label>
+                                <input type="number" id="minimo" placeholder="0" required>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" id="adicionar" class="btn btn-primary">Adicionar</button>
+                            <button type="button" id="editar" class="btn btn-warning">Editar</button>
+                            <button type="button" id="excluir" class="btn btn-danger">Excluir</button>
+                        </div>
+                    </form>
+                </div>
+
+               <!-- Lista de Produtos -->
+<div class="produto-list">
+    <div class="list-header">
+        <h2>📋 Produtos Cadastrados</h2>
+        <span class="product-count" id="produtoCount">0 produtos</span>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchProduto" placeholder="🔍 Buscar produto...">
+        <button id="buscarProduto" class="btn btn-secondary">Buscar</button>
+        <button id="limparBusca" class="btn btn-secondary">✕</button>
+    </div>
+
+    <div class="table-wrapper">
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>SKU</th>
+                        <th>Categoria</th>
+                        <th>Fornecedor</th>
+                        <th>Custo</th>
+                        <th>Venda</th>
+                        <th>Estoque</th>
+                        <th>Mínimo</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaProdutos">
+                    <!-- Os produtos serão inseridos aqui pelo JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <span class="footer-logo">ERP IMS</span>
+                    <span class="footer-divider"></span>
+                    <span class="footer-text">Cadastro de Produtos</span>
+                </div>
+                <div class="footer-center">
+                    <span>✦</span>
+                    <span>Controle total do seu estoque</span>
+                    <span>✦</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-version">v2.0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/controle.js"></script>
+    
+    <!-- Inicialização do VLibras e Relógio -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar VLibras
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+            
+            // Atualizar relógio
+            function updateClock() {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('pt-BR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                const timeElement = document.getElementById('headerTime');
+                if (timeElement) {
+                    timeElement.textContent = timeStr;
+                }
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+    </script>
+</body>
+</html>

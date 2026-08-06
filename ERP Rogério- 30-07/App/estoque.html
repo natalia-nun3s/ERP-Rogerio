@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP IMS · Movimentação de Estoque</title>
+    
+    <!-- CSS Global -->
+    <link rel="stylesheet" href="css/global.css">
+    <!-- CSS da Página -->
+    <link rel="stylesheet" href="css/estoque.css">
+    
+    <!-- VLibras -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+
+    <!-- Store - Gerenciamento Central de Dados -->
+    <script src="js/store.js"></script>
+</head>
+<body>
+
+    <!-- Fundo Animado -->
+    <div class="background-particles" id="particles"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- VLibras Widget -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <div class="logo-icon">IMS</div>
+                    <div>
+                        <h1>Movimentação de Estoque</h1>
+                        <div class="header-subtitle">ERP IMS · Controle inteligente em tempo real</div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <!-- Botão de Tema (Modo Claro/Escuro) -->
+                <button class="theme-toggle" aria-label="Alternar tema">☀️</button>
+                
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Online</span>
+                </div>
+                <span class="header-divider"></span>
+                <span class="header-time" id="headerTime"></span>
+                <a href="index.html" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.75rem;">← Dashboard</a>
+            </div>
+        </header>
+
+        <!-- Conteúdo -->
+        <div class="estoque-page">
+            <div class="estoque-grid">
+                <!-- Painel de Movimentação -->
+                <div class="movimento-panel">
+                    <div class="panel-title">
+                        <span>🚀</span> Nova Movimentação
+                        <span class="badge">flash</span>
+                    </div>
+
+                    <form id="movimentoForm">
+                        <div class="form-group">
+                            <label for="tipoMovimento">Tipo de Operação</label>
+                            <select id="tipoMovimento" required>
+                                <option value="entrada">⬆ Entrada (mercadorias)</option>
+                                <option value="saida">⬇ Saída (produtos)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="produtoNome">Produto</label>
+                            <input type="text" id="produtoNome" placeholder="Ex: iPhone 15, Notebook, Cimento" autocomplete="off" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="quantidade">Quantidade</label>
+                                <input type="number" id="quantidade" min="1" step="1" placeholder="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="responsavel">Responsável</label>
+                                <input type="text" id="responsavel" placeholder="Nome completo" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="motivo">Motivo</label>
+                                <select id="motivo" required>
+                                    <option value="venda">💰 Venda</option>
+                                    <option value="devolucao">↩ Devolução</option>
+                                    <option value="perda">⚠ Perda</option>
+                                    <option value="reposicao">📦 Reposição</option>
+                                    <option value="ajuste">🔧 Ajuste</option>
+                                    <option value="outro">📌 Outro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="dataHora">Data e Horário</label>
+                                <input type="datetime-local" id="dataHora" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span>⚡</span> Registrar Movimentação
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Histórico -->
+                <div class="historico-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <span>📊</span> Painel de Movimentações
+                            <span class="badge" id="contadorRegistros">0</span>
+                        </div>
+                        <button id="limparTodos" class="btn-limpar-tudo">🗑 Limpar tudo</button>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="stats-estoque">
+                        <div class="stat-card total">
+                            <div class="number" id="totalCount">0</div>
+                            <div class="label">Total</div>
+                            <div class="sparkline-bar"></div>
+                        </div>
+                        <div class="stat-card entrada">
+                            <div class="number" id="entradaCount">0</div>
+                            <div class="label">Entradas</div>
+                            <div class="sparkline-bar" style="background: linear-gradient(90deg, transparent, rgba(74,222,128,0.3), transparent);"></div>
+                        </div>
+                        <div class="stat-card saida">
+                            <div class="number" id="saidaCount">0</div>
+                            <div class="label">Saídas</div>
+                            <div class="sparkline-bar" style="background: linear-gradient(90deg, transparent, rgba(248,113,113,0.3), transparent);"></div>
+                        </div>
+                        <div class="stat-card unique">
+                            <div class="number" id="uniqueCount">0</div>
+                            <div class="label">Produtos únicos</div>
+                            <div class="sparkline-bar" style="background: linear-gradient(90deg, transparent, rgba(251,191,36,0.3), transparent);"></div>
+                        </div>
+                    </div>
+
+                    <!-- Filtros -->
+                    <div class="filtros-estoque">
+                        <div class="form-group">
+                            <label for="filtroData">📅 Filtrar por data</label>
+                            <input type="date" id="filtroData">
+                        </div>
+                        <div class="form-group">
+                            <label for="filtroProduto">🔍 Filtrar por produto</label>
+                            <input type="text" id="filtroProduto" placeholder="Digite o nome...">
+                        </div>
+                        <div class="btn-group">
+                            <button id="aplicarFiltros" class="btn btn-success">🔍 Aplicar</button>
+                            <button id="limparFiltros" class="btn btn-secondary">✕ Limpar</button>
+                        </div>
+                    </div>
+
+                    <!-- Tabela -->
+                    <div class="table-wrapper">
+                        <div class="table-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Tipo</th>
+                                        <th>Produto</th>
+                                        <th>Qtd</th>
+                                        <th>Responsável</th>
+                                        <th>Motivo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaHistorico">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">
+                                            <div class="icon">📭</div>
+                                            Nenhuma movimentação registrada
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+                        <small class="timestamp">💡 Dados em memória · <span id="registroTimestamp">Atualizado agora</span></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <span class="footer-logo">ERP IMS</span>
+                    <span class="footer-divider"></span>
+                    <span class="footer-text">Movimentação de Estoque</span>
+                </div>
+                <div class="footer-center">
+                    <span>✦</span>
+                    <span>Tecnologia de ponta para seu negócio</span>
+                    <span>✦</span>
+                </div>
+                <div class="footer-right">
+                    <span class="footer-version">v2.0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/estoque.js"></script>
+    
+    <!-- Inicialização do VLibras e Relógio -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar VLibras
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+            
+            // Atualizar relógio
+            function updateClock() {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('pt-BR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                const timeElement = document.getElementById('headerTime');
+                if (timeElement) {
+                    timeElement.textContent = timeStr;
+                }
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+    </script>
+</body>
+</html>

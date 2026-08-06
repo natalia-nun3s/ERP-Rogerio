@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP IMS · Dashboard</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/index.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- VLibras -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    
+    <!-- Store -->
+    <script src="js/store.js"></script>
+</head>
+<body>
+
+    <!-- Fundo Animado -->
+    <div class="background-particles" id="particles"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">IMS</div>
+                    <div>
+                        <h1>ERP IMS</h1>
+                        <span class="logo-subtitle">Gestão Inteligente de Estoque</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" aria-label="Alternar tema">☀️</button>
+                <button class="btn-tutorial" id="btnTutorial">
+                    <span>📖</span> Tutorial
+                </button>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Online</span>
+                </div>
+                <span class="header-divider"></span>
+                <span class="header-time" id="headerTime"></span>
+            </div>
+        </header>
+
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav class="sidebar-nav">
+                    <a href="index.html" class="nav-item active">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="controle.html" class="nav-item">
+                        <span class="nav-icon">📦</span>
+                        <span class="nav-text">Produtos</span>
+                        <span class="nav-badge">+</span>
+                    </a>
+                    <a href="estoque.html" class="nav-item">
+                        <span class="nav-icon">🔄</span>
+                        <span class="nav-text">Movimentações</span>
+                    </a>
+                    <a href="fornecedores.html" class="nav-item">
+                        <span class="nav-icon">🏭</span>
+                        <span class="nav-text">Fornecedores</span>
+                    </a>
+                    <a href="relatorio.html" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Relatórios</span>
+                    </a>
+                    <a href="configuracoes.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Configurações</span>
+                    </a>
+                </nav>
+                <div class="sidebar-footer">
+                    <div class="user-card">
+                        <div class="user-avatar">AD</div>
+                        <div>
+                            <div class="user-name">Administrador</div>
+                            <div class="user-role">Super Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Welcome Section -->
+                <section class="welcome-section">
+                    <div>
+                        <h2> Bem-vindo de volta!</h2>
+                        <p>Aqui está o resumo do seu estoque hoje</p>
+                    </div>
+                    <div class="date-display" id="dateDisplay"></div>
+                </section>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card" style="--accent: #6366f1">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total de Produtos</span>
+                            <span class="stat-value" id="totalProdutos">0</span>
+                        </div>
+                        <div class="stat-trend up">+12%</div>
+                    </div>
+                    <div class="stat-card" style="--accent: #f59e0b">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Estoque Baixo</span>
+                            <span class="stat-value" id="estoqueBaixo">0</span>
+                        </div>
+                        <div class="stat-trend down">-5%</div>
+                    </div>
+                    <div class="stat-card" style="--accent: #ef4444">
+                        <div class="stat-icon">🚫</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Sem Estoque</span>
+                            <span class="stat-value" id="semEstoque">0</span>
+                        </div>
+                        <div class="stat-trend down">-8%</div>
+                    </div>
+                    <div class="stat-card" style="--accent: #10b981">
+                        <div class="stat-icon">🔄</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Movimentações Hoje</span>
+                            <span class="stat-value" id="movimentoHoje">0</span>
+                        </div>
+                        <div class="stat-trend up">+23%</div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>📈 Movimentação de Estoque</h3>
+                            <span class="chart-period">Últimos 6 meses</span>
+                        </div>
+                        <canvas id="graficoMovimento"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>🏆 Produtos Mais Vendidos</h3>
+                            <span class="chart-period">Top 5</span>
+                        </div>
+                        <canvas id="graficoProdutos"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Movements -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>📋 Últimas Movimentações</h3>
+                        <a href="estoque.html" class="view-all">Ver todas →</a>
+                    </div>
+                    <div class="table-wrapper">
+                        <div class="table-scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Produto</th>
+                                        <th>Tipo</th>
+                                        <th>Quantidade</th>
+                                        <th>Data</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ultimasMovimentacoes">
+                                    <tr>
+                                        <td colspan="4" class="empty-state">
+                                            <div class="icon">📭</div>
+                                            Nenhuma movimentação registrada
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <span class="footer-brand">ERP IMS</span>
+                <span class="footer-divider">✦</span>
+                <span class="footer-text">Sistema de Gestão de Estoque</span>
+                <span class="footer-divider">✦</span>
+                <span class="footer-version">v3.0</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal Tutorial -->
+    <div class="modal-tutorial" id="modalTutorial">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📖 Manual do Usuário</h2>
+                <button class="modal-close" id="fecharTutorial">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="tutorial-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Cadastrar Produtos</h3>
+                        <p>Acesse <strong>Produtos</strong> no menu lateral.</p>
+                        <ul>
+                            <li>Preencha todos os campos do formulário</li>
+                            <li>Clique em <strong>"Adicionar"</strong> para salvar</li>
+                            <li>Selecione um produto para editar ou excluir</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Registrar Movimentações</h3>
+                        <p>Acesse <strong>Movimentações</strong> no menu lateral.</p>
+                        <ul>
+                            <li>Selecione o tipo de operação</li>
+                            <li>Digite o nome do produto (com autocomplete)</li>
+                            <li>Informe quantidade, responsável e motivo</li>
+                            <li>Clique em <strong>"Registrar Movimentação"</strong></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Acompanhar Dashboard</h3>
+                        <p>O <strong>Dashboard</strong> mostra tudo em tempo real:</p>
+                        <ul>
+                            <li><strong>Cards:</strong> Totais e estatísticas</li>
+                            <li><strong>Gráficos:</strong> Movimentações e vendas</li>
+                            <li><strong>Tabela:</strong> Últimas movimentações</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Gerenciar Fornecedores</h3>
+                        <p>Acesse <strong>Fornecedores</strong> no menu lateral.</p>
+                        <ul>
+                            <li>Cadastre novos fornecedores</li>
+                            <li>Edite informações de fornecedores existentes</li>
+                            <li>Ative ou desative fornecedores</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-close-tutorial" id="fecharTutorialBtn">Entendi, fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/index.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // VLibras
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+            
+            // Relógio
+            function updateClock() {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('pt-BR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit' 
+                });
+                const el = document.getElementById('headerTime');
+                if (el) el.textContent = timeStr;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            // Data
+            const dateEl = document.getElementById('dateDisplay');
+            if (dateEl) {
+                const now = new Date();
+                dateEl.textContent = now.toLocaleDateString('pt-BR', { 
+                    weekday: 'long', 
+                    day: 'numeric', 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+            }
+
+            // Tutorial
+            const modal = document.getElementById('modalTutorial');
+            const btn = document.getElementById('btnTutorial');
+            const close = document.getElementById('fecharTutorial');
+            const closeBtn = document.getElementById('fecharTutorialBtn');
+
+            function openTutorial() {
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeTutorial() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            if (btn) btn.addEventListener('click', openTutorial);
+            if (close) close.addEventListener('click', closeTutorial);
+            if (closeBtn) closeBtn.addEventListener('click', closeTutorial);
+            
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) closeTutorial();
+                });
+            }
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+                    closeTutorial();
+                }
+            });
+
+            // Primeira visita - abrir tutorial automaticamente
+            const primeiraVisita = localStorage.getItem('erp_ims_primeira_visita');
+            if (!primeiraVisita) {
+                setTimeout(function() {
+                    openTutorial();
+                    localStorage.setItem('erp_ims_primeira_visita', 'false');
+                }, 800);
+            }
+        });
+    </script>
+</body>
+</html>

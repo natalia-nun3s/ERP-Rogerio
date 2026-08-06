@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP IMS · Relatórios</title>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- VLibras -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    
+    <!-- Store -->
+    <script src="js/store.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/relatorios.css">
+</head>
+<body>
+
+    <!-- Fundo Animado -->
+    <div class="background-particles" id="particles"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <div class="logo-icon">📊</div>
+                    <div>
+                        <h1>ERP IMS</h1>
+                        <span class="header-subtitle">Relatórios e Análises</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" aria-label="Alternar tema">☀️</button>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Online</span>
+                </div>
+                <span class="header-divider"></span>
+                <span class="header-time" id="headerTime"></span>
+                <a href="index.html" class="btn btn-secondary btn-sm">← Dashboard</a>
+            </div>
+        </header>
+
+        <!-- Conteúdo -->
+        <div class="page-content">
+            <div class="page-header">
+                <div>
+                    <h1>📊 Relatórios e Análises</h1>
+                    <p>Visualize métricas, gere relatórios e acompanhe o desempenho do seu estoque</p>
+                </div>
+                <button class="btn btn-primary" id="btnNovoRelatorio">➕ Gerar Relatório</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="visao-geral">📈 Visão Geral</button>
+                <button class="tab-btn" data-tab="historicos">📋 Histórico de Relatórios</button>
+            </div>
+
+            <!-- Conteúdo das Tabs -->
+            <div id="tab-visao-geral">
+                <div class="relatorios-grid">
+                    <!-- Card: Movimentação Mensal -->
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3>📈 Movimentação Mensal</h3>
+                            <span class="report-date" id="mesAtual">Últimos 6 meses</span>
+                        </div>
+                        <canvas id="graficoMovimentacaoMensal"></canvas>
+                    </div>
+
+                    <!-- Card: Produtos Mais Vendidos -->
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3>🏆 Top 5 Produtos</h3>
+                            <span class="report-date">Mais vendidos</span>
+                        </div>
+                        <canvas id="graficoTopProdutos"></canvas>
+                    </div>
+
+                    <!-- Card: Resumo do Estoque -->
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3>📦 Resumo do Estoque</h3>
+                            <span class="report-date" id="dataResumo">Atualizado agora</span>
+                        </div>
+                        <canvas id="graficoResumoEstoque"></canvas>
+                    </div>
+
+                    <!-- Card: Movimentação por Tipo -->
+                    <div class="report-card">
+                        <div class="report-header">
+                            <h3>🔄 Entradas vs Saídas</h3>
+                            <span class="report-date">Período total</span>
+                        </div>
+                        <canvas id="graficoEntradaSaida"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-historicos" style="display: none;">
+                <div class="historico-relatorios">
+                    <div class="historico-header">
+                        <h3>📋 Histórico de Relatórios Gerados</h3>
+                        <div class="historico-actions">
+                            <input type="text" id="buscarHistorico" placeholder="🔍 Buscar..." style="padding:8px 14px;background:var(--input-bg);border:1px solid var(--input-border);border-radius:var(--radius-md);color:var(--text-primary);font-size:0.85rem;outline:none;font-family:'Inter',sans-serif;min-width:200px;">
+                            <button class="btn btn-danger btn-sm" id="limparHistorico">🗑 Limpar</button>
+                        </div>
+                    </div>
+                    <div class="historico-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Tipo</th>
+                                    <th>Período</th>
+                                    <th>Data de Criação</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaHistorico">
+                                <tr>
+                                    <td colspan="6" class="empty-state">
+                                        <div class="icon">📭</div>
+                                        Nenhum relatório gerado ainda
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Novo Relatório -->
+        <div class="modal" id="modalRelatorio">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>📊 Gerar Novo Relatório</h2>
+                    <button class="modal-close" id="fecharModalRelatorio">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formRelatorio">
+                        <div class="form-group">
+                            <label>Nome do Relatório</label>
+                            <input type="text" id="relNome" placeholder="Ex: Relatório Mensal - Janeiro" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tipo de Relatório</label>
+                                <select id="relTipo" required>
+                                    <option value="movimentacao">📈 Movimentação</option>
+                                    <option value="vendas">💰 Vendas</option>
+                                    <option value="estoque">📦 Estoque</option>
+                                    <option value="fornecedores">🏭 Fornecedores</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Período</label>
+                                <select id="relPeriodo" required>
+                                    <option value="dia">📅 Dia</option>
+                                    <option value="semana">📅 Semana</option>
+                                    <option value="mes">📅 Mês</option>
+                                    <option value="ano">📅 Ano</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Descrição</label>
+                            <input type="text" id="relDescricao" placeholder="Descrição do relatório...">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="cancelarRelatorio">Cancelar</button>
+                    <button class="btn btn-primary" id="salvarRelatorio">💾 Gerar Relatório</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <span class="footer-brand">ERP IMS</span>
+                <span class="footer-divider">✦</span>
+                <span class="footer-text">Relatórios e Análises</span>
+                <span class="footer-divider">✦</span>
+                <span class="footer-version">v3.0</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/relatorios.js"></script>
+</body>
+</html>

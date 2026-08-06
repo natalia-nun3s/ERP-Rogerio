@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP IMS · Fornecedores</title>
+    <link rel="stylesheet" href="css/fornecedores.css">
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script src="js/store.js"></script>
+</head>
+<body>
+    <div class="background-particles" id="particles"></div>
+    <div class="grid-overlay"></div>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <div class="logo-icon">🏭</div>
+                    <div>
+                        <h1>ERP IMS</h1>
+                        <span class="logo-subtitle">Gestão de Fornecedores</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle">☀️</button>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Online</span>
+                </div>
+                <span class="header-divider"></span>
+                <span class="header-time" id="headerTime"></span>
+                <a href="index.html" class="btn btn-secondary btn-sm">← Dashboard</a>
+            </div>
+        </header>
+
+        <!-- Conteúdo -->
+        <div class="page-content">
+            <div class="page-header">
+                <div>
+                    <h1>🏭 Fornecedores</h1>
+                    <p>Gerencie seus fornecedores e parceiros de negócios</p>
+                </div>
+                <button class="btn btn-primary" id="btnNovoFornecedor">➕ Novo Fornecedor</button>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid-mini">
+                <div class="stat-mini">
+                    <span class="stat-mini-label">Total</span>
+                    <span class="stat-mini-value" id="totalFornecedores">0</span>
+                </div>
+                <div class="stat-mini">
+                    <span class="stat-mini-label">Ativos</span>
+                    <span class="stat-mini-value" id="ativosFornecedores">0</span>
+                </div>
+                <div class="stat-mini">
+                    <span class="stat-mini-label">Inativos</span>
+                    <span class="stat-mini-value" id="inativosFornecedores">0</span>
+                </div>
+            </div>
+
+            <!-- Tabela -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>📋 Lista de Fornecedores</h3>
+                    <div class="table-actions">
+                        <input type="text" id="buscarFornecedor" placeholder="🔍 Buscar fornecedor...">
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>CNPJ</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaFornecedores">
+                            <tr><td colspan="6" class="empty-state">📭 Nenhum fornecedor cadastrado</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Fornecedor -->
+        <div class="modal" id="modalFornecedor">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalFornecedorTitle">Novo Fornecedor</h2>
+                    <button class="modal-close" id="fecharModalFornecedor">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formFornecedor">
+                        <div class="form-group">
+                            <label>Nome do Fornecedor</label>
+                            <input type="text" id="fNome" placeholder="Nome da empresa" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>CNPJ</label>
+                                <input type="text" id="fCnpj" placeholder="00.000.000/0000-00">
+                            </div>
+                            <div class="form-group">
+                                <label>Telefone</label>
+                                <input type="text" id="fTelefone" placeholder="(11) 99999-9999">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="fEmail" placeholder="contato@empresa.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Endereço</label>
+                            <input type="text" id="fEndereco" placeholder="Rua, número, bairro, cidade/UF">
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="fStatus">
+                                <option value="true">Ativo</option>
+                                <option value="false">Inativo</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="cancelarFornecedor">Cancelar</button>
+                    <button class="btn btn-primary" id="salvarFornecedor">💾 Salvar</button>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <span class="footer-brand">ERP IMS</span>
+                <span class="footer-divider">✦</span>
+                <span class="footer-text">Gestão de Fornecedores</span>
+                <span class="footer-divider">✦</span>
+                <span class="footer-version">v3.0</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/fornecedores.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+            function updateClock() {
+                const now = new Date();
+                document.getElementById('headerTime').textContent = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        });
+    </script>
+</body>
+</html>

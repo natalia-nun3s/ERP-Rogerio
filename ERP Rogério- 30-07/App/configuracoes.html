@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERP IMS · Configurações</title>
+    
+    <!-- VLibras -->
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    
+    <!-- Store -->
+    <script src="js/store.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/configuracoes.css">
+</head>
+<body>
+
+    <!-- Fundo Animado -->
+    <div class="background-particles" id="particles"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- VLibras -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo-container">
+                    <div class="logo-icon">⚙️</div>
+                    <div>
+                        <h1>ERP IMS</h1>
+                        <span class="header-subtitle">Configurações · RH</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" aria-label="Alternar tema">☀️</button>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Online</span>
+                </div>
+                <span class="header-divider"></span>
+                <span class="header-time" id="headerTime"></span>
+                <a href="index.html" class="btn btn-secondary btn-sm">← Dashboard</a>
+            </div>
+        </header>
+
+        <!-- Conteúdo -->
+        <div class="page-content">
+            <div class="page-header">
+                <div>
+                    <h1>⚙️ Configurações · RH</h1>
+                    <p>Gerencie os funcionários e colaboradores da sua empresa</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="funcionarios">👥 Funcionários</button>
+                <button class="tab-btn" data-tab="departamentos">🏢 Departamentos</button>
+                <button class="tab-btn" data-tab="rh">📋 RH</button>
+            </div>
+
+            <!-- Tab Funcionários -->
+            <div id="tab-funcionarios">
+                <div class="funcionarios-grid">
+                    <!-- Formulário -->
+                    <div class="form-panel">
+                        <div class="form-title">
+                            <span>✏️</span> Dados do Funcionário
+                            <span class="badge" id="formBadge">novo</span>
+                        </div>
+                        <form id="formFuncionario">
+                            <div class="form-group">
+                                <label>Nome Completo</label>
+                                <input type="text" id="fNome" placeholder="Ex: João Silva" required>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>CPF</label>
+                                    <input type="text" id="fCpf" placeholder="000.000.000-00">
+                                </div>
+                                <div class="form-group">
+                                    <label>Telefone</label>
+                                    <input type="text" id="fTelefone" placeholder="(11) 99999-9999">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="fEmail" placeholder="email@empresa.com">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Cargo</label>
+                                    <input type="text" id="fCargo" placeholder="Ex: Gerente, Analista">
+                                </div>
+                                <div class="form-group">
+                                    <label>Departamento</label>
+                                    <select id="fDepartamento">
+                                        <option value="Administração">Administração</option>
+                                        <option value="TI">TI</option>
+                                        <option value="Vendas">Vendas</option>
+                                        <option value="Estoque">Estoque</option>
+                                        <option value="RH">RH</option>
+                                        <option value="Financeiro">Financeiro</option>
+                                        <option value="Operações">Operações</option>
+                                        <option value="Outro">Outro</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="fStatus">
+                                    <option value="ativo">🟢 Ativo</option>
+                                    <option value="inativo">🔴 Inativo</option>
+                                    <option value="ferias">🟡 Férias</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" id="adicionarFuncionario" class="btn btn-primary">➕ Adicionar</button>
+                                <button type="button" id="editarFuncionario" class="btn btn-warning">✏️ Editar</button>
+                            </div>
+                            <button type="button" id="excluirFuncionario" class="btn btn-danger" style="width:100%;margin-top:8px;">🗑 Excluir Funcionário</button>
+                        </form>
+                    </div>
+
+                    <!-- Lista -->
+                    <div class="funcionarios-list">
+                        <div class="list-header">
+                            <h2>👥 Funcionários Cadastrados</h2>
+                            <div class="list-actions">
+                                <input type="text" id="buscarFuncionario" placeholder="🔍 Buscar funcionário...">
+                                <span class="employee-count" id="funcionarioCount">0 funcionários</span>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <div class="table-scroll">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>CPF</th>
+                                            <th>Cargo</th>
+                                            <th>Departamento</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabelaFuncionarios">
+                                        <tr>
+                                            <td colspan="6" class="empty-state">
+                                                <div class="icon">📭</div>
+                                                Nenhum funcionário cadastrado
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Departamentos -->
+            <div id="tab-departamentos" style="display: none;">
+                <div class="funcionarios-grid">
+                    <div class="form-panel">
+                        <div class="form-title">
+                            <span>🏢</span> Gerenciar Departamentos
+                            <span class="badge">novo</span>
+                        </div>
+                        <form id="formDepartamento">
+                            <div class="form-group">
+                                <label>Nome do Departamento</label>
+                                <input type="text" id="dNome" placeholder="Ex: Marketing" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Responsável</label>
+                                <input type="text" id="dResponsavel" placeholder="Nome do responsável">
+                            </div>
+                            <button type="button" id="adicionarDepartamento" class="btn btn-primary btn-block">➕ Adicionar Departamento</button>
+                        </form>
+                    </div>
+                    <div class="funcionarios-list">
+                        <div class="list-header">
+                            <h2>🏢 Departamentos</h2>
+                            <span class="employee-count" id="departamentoCount">0 departamentos</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <div class="table-scroll">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Departamento</th>
+                                            <th>Responsável</th>
+                                            <th>Funcionários</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabelaDepartamentos">
+                                        <tr>
+                                            <td colspan="4" class="empty-state">
+                                                <div class="icon">📭</div>
+                                                Nenhum departamento cadastrado
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab RH -->
+            <div id="tab-rh" style="display: none;">
+                <div class="funcionarios-grid">
+                    <div class="form-panel">
+                        <div class="form-title">
+                            <span>📋</span> Ações de RH
+                            <span class="badge">gestão</span>
+                        </div>
+                        <div style="display:flex;flex-direction:column;gap:12px;">
+                            <button class="btn btn-primary" id="btnGerarFolha">📄 Gerar Folha de Pagamento</button>
+                            <button class="btn btn-success" id="btnGerarRelatorioRH">📊 Gerar Relatório RH</button>
+                            <button class="btn btn-warning" id="btnFerias">🌴 Gerenciar Férias</button>
+                            <button class="btn btn-danger" id="btnDesligarFuncionario">🚫 Desligar Funcionário</button>
+                        </div>
+                        <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border-color);">
+                            <h4 style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:12px;">📊 Resumo RH</h4>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                                <div style="background:var(--bg-hover);padding:12px;border-radius:var(--radius-md);text-align:center;">
+                                    <div style="font-size:0.7rem;color:var(--text-muted);">Total</div>
+                                    <div style="font-size:1.5rem;font-weight:700;color:var(--text-primary);" id="rhTotal">0</div>
+                                </div>
+                                <div style="background:var(--bg-hover);padding:12px;border-radius:var(--radius-md);text-align:center;">
+                                    <div style="font-size:0.7rem;color:var(--text-muted);">Ativos</div>
+                                    <div style="font-size:1.5rem;font-weight:700;color:var(--success);" id="rhAtivos">0</div>
+                                </div>
+                                <div style="background:var(--bg-hover);padding:12px;border-radius:var(--radius-md);text-align:center;">
+                                    <div style="font-size:0.7rem;color:var(--text-muted);">Inativos</div>
+                                    <div style="font-size:1.5rem;font-weight:700;color:var(--danger);" id="rhInativos">0</div>
+                                </div>
+                                <div style="background:var(--bg-hover);padding:12px;border-radius:var(--radius-md);text-align:center;">
+                                    <div style="font-size:0.7rem;color:var(--text-muted);">Férias</div>
+                                    <div style="font-size:1.5rem;font-weight:700;color:var(--warning);" id="rhFerias">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="funcionarios-list">
+                        <div class="list-header">
+                            <h3>📋 Histórico de Ações RH</h3>
+                        </div>
+                        <div class="table-wrapper">
+                            <div class="table-scroll">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Ação</th>
+                                            <th>Funcionário</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabelaRH">
+                                        <tr>
+                                            <td colspan="4" class="empty-state">
+                                                <div class="icon">📭</div>
+                                                Nenhuma ação registrada
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal RH - Desligar Funcionário -->
+        <div class="modal" id="modalDesligar">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🚫 Desligar Funcionário</h2>
+                    <button class="modal-close" id="fecharModalDesligar">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formDesligar">
+                        <div class="form-group">
+                            <label>Funcionário</label>
+                            <select id="desligarFuncionario" required>
+                                <option value="">Selecione um funcionário</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Motivo do Desligamento</label>
+                            <select id="desligarMotivo" required>
+                                <option value="pedido_demissao">📝 Pedido de Demissão</option>
+                                <option value="justa_causa">⚖️ Justa Causa</option>
+                                <option value="reducao_quadro">📉 Redução de Quadro</option>
+                                <option value="aposentadoria">🎯 Aposentadoria</option>
+                                <option value="outro">📌 Outro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Data de Saída</label>
+                            <input type="date" id="desligarData" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Observações</label>
+                            <input type="text" id="desligarObs" placeholder="Observações adicionais...">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="cancelarDesligar">Cancelar</button>
+                    <button class="btn btn-danger" id="confirmarDesligar">🚫 Confirmar Desligamento</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Férias -->
+        <div class="modal" id="modalFerias">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🌴 Gerenciar Férias</h2>
+                    <button class="modal-close" id="fecharModalFerias">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="formFerias">
+                        <div class="form-group">
+                            <label>Funcionário</label>
+                            <select id="feriasFuncionario" required>
+                                <option value="">Selecione um funcionário</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Início</label>
+                                <input type="date" id="feriasInicio" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Fim</label>
+                                <input type="date" id="feriasFim" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Observações</label>
+                            <input type="text" id="feriasObs" placeholder="Observações sobre as férias...">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" id="cancelarFerias">Cancelar</button>
+                    <button class="btn btn-warning" id="confirmarFerias">🌴 Registrar Férias</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <span class="footer-brand">ERP IMS</span>
+                <span class="footer-divider">✦</span>
+                <span class="footer-text">Configurações · RH</span>
+                <span class="footer-divider">✦</span>
+                <span class="footer-version">v3.0</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/configuracoes.js"></script>
+</body>
+</html>
